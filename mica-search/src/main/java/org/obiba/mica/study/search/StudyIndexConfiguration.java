@@ -59,8 +59,8 @@ public class StudyIndexConfiguration extends AbstractIndexConfiguration
       "memberships.contact.person.institution.name.und"
     );
     addTaxonomyFields(mapping, taxonomy, ignore);
-    mapping.endObject();
 
+    mapping.endObject().endObject().endObject();
     return mapping;
   }
 

@@ -73,12 +73,12 @@ public class EsPublishedDatasetVariableService extends AbstractDocumentService<D
       return 0;
     }
 
-    return response.getHits().totalHits();
+    return response.getHits().getTotalHits();
   }
 
   public Map<String, Long> getCountByStudyIds(List<String> studyIds) {
     SearchResponse response = executeCountQuery(buildStudiesFilteredQuery(studyIds),
-      AggregationBuilders.terms(STUDY_IDS_FIELD).field(STUDY_IDS_FIELD).size(0));
+      AggregationBuilders.terms(STUDY_IDS_FIELD).field(STUDY_IDS_FIELD).size(99999));
 
     if(response == null) {
       return studyIds.stream().collect(Collectors.toMap(s -> s, s -> 0L));
@@ -86,7 +86,7 @@ public class EsPublishedDatasetVariableService extends AbstractDocumentService<D
 
     Terms aggregation = response.getAggregations().get(STUDY_IDS_FIELD);
     return studyIds.stream().collect(Collectors.toMap(s -> s,
-      s -> Optional.ofNullable(aggregation.getBucketByKey(s)).map(Terms.Bucket::getDocCount).orElse(0L)));
+      s -> Optional.ofNullable(aggregation.getBucketByKey(s)).map(Terms.Bucket::getDocCount).orElse(99999L)));
   }
 
   @Override

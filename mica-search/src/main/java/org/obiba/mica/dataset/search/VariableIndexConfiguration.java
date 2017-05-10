@@ -44,10 +44,19 @@ public class VariableIndexConfiguration extends AbstractIndexConfiguration
   }
 
   private XContentBuilder createMappingProperties(String type) throws IOException {
-    XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject(type);
-    mapping.startArray("dynamic_templates").startObject().startObject("und").field("match", "und")
-      .field("match_mapping_type", "string").startObject("mapping").field("type", "string")
-      .field("index", "not_analyzed").endObject().endObject().endObject().endArray();
+    XContentBuilder mapping = XContentFactory.jsonBuilder()
+      .startObject()
+        .startObject(type);
+          mapping.startArray("dynamic_templates")
+            .startObject()
+              .startObject("und")
+                .field("match_mapping_type", "string")
+                .startObject("mapping")
+                  .field("type", "keyword")
+                .endObject()
+              .endObject()
+            .endObject()
+          .endArray();
 
     // properties
     mapping.startObject("properties");

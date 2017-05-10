@@ -42,13 +42,25 @@ public class DatasetIndexConfiguration extends AbstractIndexConfiguration
 
   private XContentBuilder createMappingProperties() throws IOException {
     XContentBuilder mapping = XContentFactory.jsonBuilder().startObject().startObject(DatasetIndexer.DATASET_TYPE);
+
+    mapping.startArray("dynamic_templates")
+      .startObject()
+        .startObject("und")
+          .field("match_mapping_type", "string")
+          .startObject("mapping")
+            .field("type", "keyword")
+          .endObject()
+        .endObject()
+      .endObject()
+    .endArray();
+
     mapping.startObject("properties");
     Taxonomy taxonomy = getTaxonomy();
     addStaticVocabularies(taxonomy, "studyTable.id", "studyTable.studyId", //
       "studyTables.id", "studyTables.studyId");
     addLocalizedVocabularies(taxonomy, "name", "acronym", "description");
     addTaxonomyFields(mapping, taxonomy, Lists.newArrayList());
-    mapping.endObject().endObject();
+    mapping.endObject().endObject().endObject();
 
     return mapping;
   }

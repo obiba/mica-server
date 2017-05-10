@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.InternalAggregation;
 import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.global.Global;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
@@ -68,7 +69,7 @@ public class EsQueryResultParser {
 
       AggregationResultDto.Builder aggResultBuilder = AggregationResultDto.newBuilder();
       aggResultBuilder.setAggregation(defaultAgg.getName());
-      String aggType = defaultAgg.getName();
+      String aggType = getAggregationType((InternalAggregation) defaultAgg);
 
       switch(aggType) {
         case "stats":
@@ -175,6 +176,11 @@ public class EsQueryResultParser {
     });
 
     return aggResults;
+  }
+
+  private String getAggregationType(InternalAggregation defaultAgg) {
+    String writableName = defaultAgg.getWriteableName();
+    return writableName.matches("\\w+terms$") ? "terms" : writableName;
   }
 
   public List<AggregationResultDto> parseAggregations(@NotNull Aggregations aggregations) {

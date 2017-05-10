@@ -364,8 +364,8 @@ public abstract class AbstractDocumentQuery {
         ? QueryBuilders.matchAllQuery()
         : QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).must(accessFilter)) //
       .setFrom(from) //
-      .setSize(scope == DETAIL ? size : 0); //
-      //.setNoFields().addAggregation(AggregationBuilders.global(AGG_TOTAL_COUNT)); //
+      .setSize(scope == DETAIL ? size : 0)
+      .addAggregation(AggregationBuilders.global(AGG_TOTAL_COUNT)); //
 
     SearchRequestBuilder requestBuilder = client.prepareSearch(getSearchIndex()) //
       .setTypes(getSearchType()) //
@@ -398,7 +398,7 @@ public abstract class AbstractDocumentQuery {
         log.debug("Response /{}/{}: totalHits=null", getSearchIndex(), getSearchType());
         return null;
       }
-      log.debug("Response /{}/{}: totalHits={}", getSearchIndex(), getSearchType(), response.getHits().totalHits());
+      log.debug("Response /{}/{}: totalHits={}", getSearchIndex(), getSearchType(), response.getHits().getTotalHits());
 
       QueryResultDto.Builder builder = QueryResultDto.newBuilder()
         .setTotalHits((int) response.getHits().getTotalHits());

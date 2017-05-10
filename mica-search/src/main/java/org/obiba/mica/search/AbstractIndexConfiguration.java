@@ -71,7 +71,7 @@ public abstract class AbstractIndexConfiguration {
       Stream.concat(micaConfigService.getConfig().getLocalesAsString().stream(), Stream.of(
         LanguageTag.UNDETERMINED)).forEach(locale -> {
         try {
-          mapping.startObject(locale).field("type", "multi_field");
+          mapping.startObject(locale).field("type", "keyword");
           createMappingWithAnalyzers(mapping, locale);
           mapping.endObject();
         } catch(IOException e) {
@@ -91,7 +91,7 @@ public abstract class AbstractIndexConfiguration {
 
   protected void createMappingWithoutAnalyzer(XContentBuilder mapping, String name, String type) {
     try {
-      mapping.startObject(name).field("type", resolveType(type)).field("index", "not_analyzed").endObject();
+      mapping.startObject(name).field("type", resolveType(type)).endObject();
     } catch(IOException e) {
       log.error("Failed to create localized mappings: '{}'", e);
     }
@@ -99,7 +99,7 @@ public abstract class AbstractIndexConfiguration {
 
   protected void createMappingWithAndWithoutAnalyzer(XContentBuilder mapping, String name) {
     try {
-      mapping.startObject(name).field("type", "multi_field");
+      mapping.startObject(name).field("type", "keyword");
       createMappingWithAnalyzers(mapping, name);
       mapping.endObject();
     } catch(IOException e) {
@@ -112,15 +112,9 @@ public abstract class AbstractIndexConfiguration {
       .startObject("fields")
         .field("analyzed")
         .startObject()
-          .field("type", "string")
-          .field("index", "analyzed")
+          .field("type", "text")
           .field("analyzer", "mica_index_analyzer")
           .field("search_analyzer", "mica_search_analyzer")
-        .endObject()
-        .field(name)
-        .startObject()
-          .field("type", "string")
-          .field("index", "not_analyzed")
         .endObject()
       .endObject();
   }
@@ -171,7 +165,7 @@ public abstract class AbstractIndexConfiguration {
       }
     }
 
-    return "string";
+    return "keyword";
   }
 
   private void insertInSchema(SchemaNode schema, List<String> path, final Vocabulary vocabulary) {

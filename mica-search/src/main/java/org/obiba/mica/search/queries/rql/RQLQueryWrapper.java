@@ -11,6 +11,7 @@
 package org.obiba.mica.search.queries.rql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -308,9 +309,15 @@ public class RQLQueryWrapper implements QueryWrapper {
       }
 
       Object terms = node.getArgument(1);
-      visitField(field, terms instanceof Collection ? ((Collection<Object>) terms).stream().map(Object::toString)
-        .collect(Collectors.toList()) : Collections.singleton(terms.toString()));
-      return QueryBuilders.termsQuery(field, terms instanceof Collection ? (Collection) terms : terms);
+
+      if (terms instanceof ArrayList) {
+        ArrayList stringTerms = Lists.newArrayList((Collection)terms);
+        visitField(field, stringTerms);
+        return QueryBuilders.termsQuery(field, stringTerms);
+      }
+
+      visitField(field, Collections.singleton(terms.toString()));
+      return QueryBuilders.termsQuery(field, terms);
     }
 
     private QueryBuilder visitInRangeInternal(FieldData data, Object rangesArgument) {

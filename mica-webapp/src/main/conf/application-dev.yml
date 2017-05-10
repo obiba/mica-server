@@ -18,8 +18,10 @@ agate:
         key: changeit
 
 elasticsearch:
-    dataNode: true
+    dataNode: false
     clusterName: mica
+    transportClient: true
+    transportAddress: "localhost:9300"
     shards: 5
     replicas: 1
     settings: "http.enabled: true"

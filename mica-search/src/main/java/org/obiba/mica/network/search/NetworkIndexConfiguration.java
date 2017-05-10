@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.obiba.mica.core.domain.TaxonomyTarget;
 import org.obiba.mica.search.AbstractIndexConfiguration;
 import org.obiba.mica.search.ElasticSearchIndexer;
@@ -61,7 +62,8 @@ public class NetworkIndexConfiguration extends AbstractIndexConfiguration
 
     addTaxonomyFields(mapping, taxonomy, ignore);
 
-    mapping.endObject().endObject();
+    mapping.endObject().endObject().endObject();
+
     return mapping;
   }
 

@@ -66,7 +66,7 @@ public class RQLQueryWrapperTest {
     TermsQueryBuilder termsQueryBuilder = (TermsQueryBuilder)queryBuilders.get(0);
     assertThat(termsQueryBuilder).isNotNull();
     assertThat(termsQueryBuilder.fieldName()).isEqualTo("attributes.Mlstr_area__Lifestyle_behaviours.und");
-    List<Object> innerValues = (List<Object>)termsQueryBuilder.values().get(0);
+    List<Object> innerValues = termsQueryBuilder.values();
     assertThat(innerValues.size()).isEqualTo(2);
     assertThat(innerValues.indexOf("Phys_act")).isEqualTo(0);
     assertThat(innerValues.indexOf("Tobacco")).isEqualTo(1);

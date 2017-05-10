@@ -46,8 +46,8 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <ehcache-core.version>2.6.11</ehcache-core.version>
-    <elasticsearch.version>5.0.0</elasticsearch.version>
-    <elasticsearch-transport-cient.version>5.0.0</elasticsearch-transport-cient.version>
+    <elasticsearch.version>5.4.0</elasticsearch.version>
+    <elasticsearch-transport-client.version>5.4.0</elasticsearch-transport-client.version>
     <log4j.version>2.7</log4j.version>
     <elasticsearch-groovy.version>2.1.2</elasticsearch-groovy.version>
     <embed-mongo.version>1.50.0</embed-mongo.version>
@@ -196,7 +196,7 @@
       <dependency>
         <groupId>org.elasticsearch.client</groupId>
         <artifactId>transport</artifactId>
-        <version>${elasticsearch-transport-cient.version}</version>
+        <version>${elasticsearch-transport-client.version}</version>
       </dependency>
 
       <dependency>
