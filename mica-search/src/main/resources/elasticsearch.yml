@@ -3,4 +3,3 @@ script:
     inline: true
     stored: true
 transport.type: local
-discovery.type: local

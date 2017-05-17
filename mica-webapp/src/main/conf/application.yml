@@ -26,13 +26,15 @@ agate:
 
 # Elasticsearch: search engine configuration
 elasticsearch:
-    dataNode: true
+    dataNode: false
     clusterName: mica
+    transportClient: true
+    transportAddress: "localhost:9300"
     shards: 5
     replicas: 1
     settings: "http.enabled: false"
-    maxConcurrentJoinQueries: 4
-    concurrentJoinQueriesWaitTimeout: 30000
+    maxConcurrentJoinQueries: 2
+    concurrentJoinQueriesWaitTimeout: 15000
 
 # Shiro: user directory configuration
 shiro:
