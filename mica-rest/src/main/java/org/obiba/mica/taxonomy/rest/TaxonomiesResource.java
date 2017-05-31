@@ -22,7 +22,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.obiba.mica.micaConfig.event.TaxonomiesUpdatedEvent;
 import org.obiba.mica.micaConfig.service.CacheService;
 import org.obiba.mica.micaConfig.service.OpalService;
 import org.obiba.mica.security.Roles;
@@ -67,7 +66,7 @@ public class TaxonomiesResource {
   @RequiresRoles(Roles.MICA_ADMIN)
   public Response updateIndices() {
     cacheService.clearOpalTaxonomiesCache();
-    eventBus.post(new TaxonomiesUpdatedEvent());
+    new Thread(() -> opalService.getTaxonomies()).start();
     return Response.noContent().build();
   }
 }

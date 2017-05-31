@@ -443,7 +443,7 @@ mica.study
         } else {
           DraftStudyPublicationResource.unPublish({id: $scope.study.id}, function (response) {
             $scope.studySummary = StudyStateResource.get({id: $routeParams.id}, initializeState);
-            if (response) {
+            if (response && (response.harmonizationDataset || response.network || response.studyDataset)) {
               StudyUpdateWarningService.popup(response, 'study.potential-conflicts', 'study.potential-conflicts-message');
             }
           });
@@ -845,7 +845,7 @@ mica.study
       };
 
       var redirectToStudy = function (response) {
-        $location.path('/study/' + response.study.id).replace();
+        $location.path('/study/' + (response ? response.study.id : $scope.study.id)).replace();
       };
     }])
 
@@ -1029,7 +1029,7 @@ mica.study
 
       var redirectToStudy = function (response) {
         $location.search('sourceDceId', null);
-        $location.path('/study/' + response.study.id).replace();
+        $location.path('/study/' + (response ? response.study.id : $scope.study.id)).replace();
       };
 
     }])
