@@ -10,26 +10,38 @@
 
 package org.obiba.mica.web.model;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
+import com.google.common.base.Strings;
 import org.obiba.mica.core.domain.LocalizedString;
 import org.obiba.mica.core.service.AgateServerConfigService;
 import org.obiba.mica.file.Attachment;
 import org.obiba.mica.micaConfig.AuthType;
-import org.obiba.mica.micaConfig.domain.HarmonizationStudyConfig;
 import org.obiba.mica.micaConfig.PdfDownloadType;
-import org.obiba.mica.micaConfig.domain.*;
+import org.obiba.mica.micaConfig.domain.DataAccessAmendmentForm;
+import org.obiba.mica.micaConfig.domain.DataAccessForm;
+import org.obiba.mica.micaConfig.domain.DataCollectionEventConfig;
+import org.obiba.mica.micaConfig.domain.DatasetConfig;
+import org.obiba.mica.micaConfig.domain.EntityConfig;
+import org.obiba.mica.micaConfig.domain.HarmonizationDatasetConfig;
+import org.obiba.mica.micaConfig.domain.HarmonizationPopulationConfig;
+import org.obiba.mica.micaConfig.domain.HarmonizationStudyConfig;
+import org.obiba.mica.micaConfig.domain.MicaConfig;
 import org.obiba.mica.micaConfig.domain.MicaConfig.OpalViewsGrouping;
+import org.obiba.mica.micaConfig.domain.NetworkConfig;
+import org.obiba.mica.micaConfig.domain.OpalCredential;
+import org.obiba.mica.micaConfig.domain.PopulationConfig;
+import org.obiba.mica.micaConfig.domain.ProjectConfig;
+import org.obiba.mica.micaConfig.domain.StudyConfig;
+import org.obiba.mica.micaConfig.domain.StudyDatasetConfig;
+import org.obiba.mica.micaConfig.service.MicaConfigService;
 import org.obiba.mica.security.service.SubjectAclService;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Strings;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -45,16 +57,19 @@ class MicaConfigDtos {
 
   private AgateServerConfigService agateServerConfigService;
 
+  private MicaConfigService micaConfigService;
+
   @Inject
   public MicaConfigDtos(
     LocalizedStringDtos localizedStringDtos,
     AttachmentDtos attachmentDtos,
     SubjectAclService subjectAclService,
-    AgateServerConfigService agateServerConfigService) {
+    AgateServerConfigService agateServerConfigService, MicaConfigService micaConfigService) {
     this.localizedStringDtos = localizedStringDtos;
     this.attachmentDtos = attachmentDtos;
     this.subjectAclService = subjectAclService;
     this.agateServerConfigService = agateServerConfigService;
+    this.micaConfigService = micaConfigService;
   }
 
   MicaConfigDtos() {
@@ -90,6 +105,14 @@ class MicaConfigDtos {
       .setDefaultCharSet(config.getDefaultCharacterSet())//
       .setOpenAccess(config.isOpenAccess());
     config.getLocales().forEach(locale -> builder.addLanguages(locale.getLanguage()));
+
+    if(config.hasAgateUrl()) {
+      builder.setAgateUrl(config.getAgateUrl());
+    }
+
+    if (config.hasServiceName()) {
+      builder.setServiceName(config.getServiceName());
+    }
 
     if(!Strings.isNullOrEmpty(config.getPublicUrl())) {
       builder.setPublicUrl(config.getPublicUrl());
@@ -174,6 +197,11 @@ class MicaConfigDtos {
     config.setOpalViewsGrouping(OpalViewsGrouping.valueOf(dto.getOpalViewsGrouping()));
 
     if (dto.hasSearchLayout()) config.setSearchLayout(dto.getSearchLayout());
+
+    config.setAgateUrl(Strings.emptyToNull(dto.getAgateUrl()));
+    config.setServiceName(Strings.emptyToNull(dto.getServiceName()));
+    String serviceKey = dto.getServiceKey();
+    config.setServiceKey(Strings.isNullOrEmpty(serviceKey) ? null : micaConfigService.encrypt(dto.getServiceKey()));
 
     if(dto.hasPublicUrl()) config.setPublicUrl(dto.getPublicUrl());
     if(dto.hasPortalUrl()) config.setPortalUrl(dto.getPortalUrl());

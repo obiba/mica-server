@@ -11,9 +11,7 @@ package org.obiba.mica.security;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import java.util.Set;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import com.google.common.eventbus.Subscribe;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.credential.PasswordMatcher;
@@ -33,15 +31,23 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.obiba.mica.core.service.AgateServerConfigService;
+import org.obiba.mica.micaConfig.event.MicaConfigUpdatedEvent;
 import org.obiba.shiro.SessionStorageEvaluator;
 import org.obiba.shiro.realm.ObibaRealm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManager> {
@@ -52,8 +58,6 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private static final Logger log = LoggerFactory.getLogger(SecurityManagerFactory.class);
 
-  private final Environment environment;
-
   private final Set<Realm> realms;
 
   private final RolePermissionResolver rolePermissionResolver;
@@ -62,21 +66,23 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
 
   private final CacheManager cacheManager;
 
+  private final AgateServerConfigService agateServerConfigService;
+
   private SessionsSecurityManager securityManager;
 
   @Inject
   @Lazy
   public SecurityManagerFactory(
-    Environment environment,
     Set<Realm> realms,
     RolePermissionResolver rolePermissionResolver,
     PermissionResolver permissionResolver,
-    CacheManager cacheManager) {
-    this.environment = environment;
+    CacheManager cacheManager,
+    AgateServerConfigService agateServerConfigService) {
     this.realms = realms;
     this.rolePermissionResolver = rolePermissionResolver;
     this.permissionResolver = permissionResolver;
     this.cacheManager = cacheManager;
+    this.agateServerConfigService = agateServerConfigService;
   }
 
   @Override
@@ -107,18 +113,37 @@ public class SecurityManagerFactory implements FactoryBean<SessionsSecurityManag
     securityManager = null;
   }
 
+  @Async
+  @Subscribe
+  public void onMicaConfigUpdated(MicaConfigUpdatedEvent event) {
+    SessionsSecurityManager manager = securityManager;
+    Collection<Realm> realms = manager.getRealms();
+
+    List<Realm> list = realms.stream().filter(realm -> !realm.getName().equals(ObibaRealm.OBIBA_REALM)).collect(Collectors.toList());
+    ImmutableList.Builder<Realm> builder = ImmutableList.<Realm>builder().add(micaIniRealm());
+    builder.addAll(list);
+
+    initializeAgateRealm(builder);
+
+    manager.setRealms(builder.build());
+  }
+
+  private void initializeAgateRealm(ImmutableList.Builder<Realm> builder) {
+    String obibaRealmUrl = agateServerConfigService.getAgateUrl();
+    String serviceName = agateServerConfigService.getServiceName();
+    String serviceKey = agateServerConfigService.getServiceKey();
+
+
+    if (!Strings.isNullOrEmpty(obibaRealmUrl)) {
+      builder.add(obibaRealm(obibaRealmUrl, serviceName, serviceKey));
+    }
+  }
+
   private SessionsSecurityManager doCreateSecurityManager() {
 
     ImmutableList.Builder<Realm> builder = ImmutableList.<Realm>builder().add(micaIniRealm());
 
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(environment, "agate.");
-    String obibaRealmUrl = propertyResolver.getProperty("url");
-    String serviceName = propertyResolver.getProperty("application.name");
-    String serviceKey = propertyResolver.getProperty("application.key");
-
-    if(!Strings.isNullOrEmpty(obibaRealmUrl)) {
-      builder.add(obibaRealm(obibaRealmUrl, serviceName, serviceKey));
-    }
+    initializeAgateRealm(builder);
 
     builder.addAll(realms);
 

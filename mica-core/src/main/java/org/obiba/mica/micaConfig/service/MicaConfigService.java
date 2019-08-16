@@ -154,6 +154,33 @@ public class MicaConfigService {
     eventBus.post(new MicaConfigUpdatedEvent(getConfig(), removedRoles));
   }
 
+  public String getAgateUrl() {
+    MicaConfig config = getConfig();
+    if (config.hasAgateUrl()) {
+      return config.getAgateUrl();
+    } else {
+      return env.getProperty("agate.url");
+    }
+  }
+
+  public String getServiceName() {
+    MicaConfig config = getConfig();
+    if (config.hasServiceName()) {
+      return config.getServiceName();
+    } else {
+      return env.getProperty("agate.application.name");
+    }
+  }
+
+  public String getServiceKey() {
+    MicaConfig config = getConfig();
+    if (config.hasServiceKey()) {
+      return decrypt(config.getServiceKey());
+    } else {
+      return env.getProperty("agate.application.key");
+    }
+  }
+
   /**
    * Get the public url, statically defined if not part of the {@link org.obiba.mica.micaConfig.domain.MicaConfig}.
    *

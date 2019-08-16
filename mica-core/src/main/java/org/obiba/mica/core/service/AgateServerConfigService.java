@@ -1,53 +1,41 @@
 package org.obiba.mica.core.service;
 
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.core.env.Environment;
+import org.obiba.mica.micaConfig.service.MicaConfigService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+/**
+ * Convenient service for server specific config queries
+ */
 @Service
 public class AgateServerConfigService {
 
-  private String agateUrl;
 
-  private String serviceName;
-
-  private String serviceKey;
-
-  protected final Environment env;
+  protected final MicaConfigService micaConfigService;
 
   @Inject
-  public AgateServerConfigService(Environment env) {
-    this.env = env;
-  }
-
-  @PostConstruct
-  public void initialize() {
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(env, "agate.");
-    agateUrl = propertyResolver.getProperty("url");
-    serviceName = propertyResolver.getProperty("application.name");
-    serviceKey = propertyResolver.getProperty("application.key");
+  public AgateServerConfigService(MicaConfigService micaConfigService) {
+    this.micaConfigService = micaConfigService;
   }
 
   public String getServiceKey() {
-    return serviceKey;
+    return micaConfigService.getServiceKey();
   }
 
   public String getServiceName() {
-    return serviceName;
+    return micaConfigService.getServiceName();
   }
 
   public String getAgateUrl() {
-    return agateUrl;
+    return micaConfigService.getAgateUrl();
   }
 
-  public String buildToken() {
-    return serviceName + ":" + serviceKey;
+  String buildToken() {
+    return getServiceName() + ":" + getServiceKey();
   }
 
-  public boolean isSecured() {
-    return agateUrl.toLowerCase().startsWith("https://");
+  boolean isSecured() {
+    return getAgateUrl().toLowerCase().startsWith("https://");
   }
 }

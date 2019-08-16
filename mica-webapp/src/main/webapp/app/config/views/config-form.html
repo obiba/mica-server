@@ -27,7 +27,7 @@
             help="config.name-help"></div>
 
         <div form-input name="publicUrl" model="micaConfig.publicUrl" label="config.publicUrl"
-            help="config.publicUrl-help"></div>
+             help="config.publicUrl-help"></div>
 
         <div form-input name="portalUrl" model="micaConfig.portalUrl" label="config.portalUrl"
              help="config.portalUrl-help"></div>
@@ -41,6 +41,18 @@
 
         <div form-input name="threshold" model="micaConfig.privacyThreshold" label="config.privacy-threshold"
             type="number" required="false" help="config.privacy-threshold-help"></div>
+
+        <!-- Agate settings -->
+
+        <h3 ng-class="{'no-margin-top': screen.is('lg')}" translate>config.agate-settings</h3>
+        <div class="help-block">{{'config.agate-settings-help' | translate}}</div>
+
+        <div form-input name="agate-url" model="micaConfig.agateUrl" label="config.agate-url"
+             help="config.agate-url-help"></div>
+        <div form-input name="service-name" model="micaConfig.serviceName" label="config.service-name"
+            help="config.server-name-help"></div>
+        <div form-input name="service-key" model="micaConfig.serviceKey" label="config.service-key"
+            help="config.server-key-help" type="password"></div>
       </div>
     </div>
 

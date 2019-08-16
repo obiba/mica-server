@@ -64,6 +64,12 @@ public class MicaConfig extends AbstractAuditableDocument {
 
   private List<String> roles = Lists.newArrayList(Membership.CONTACT, Membership.INVESTIGATOR);
 
+  private String agateUrl;
+
+  private String serviceName;
+
+  private String serviceKey;
+
   private String publicUrl;
 
   private String portalUrl;
@@ -172,6 +178,42 @@ public class MicaConfig extends AbstractAuditableDocument {
 
   public void setOpal(String opal) {
     this.opal = opal;
+  }
+
+  public String getAgateUrl() {
+    return agateUrl;
+  }
+
+  public void setAgateUrl(String agateUrl) {
+    this.agateUrl = agateUrl;
+  }
+
+  public boolean hasAgateUrl() {
+    return !Strings.isNullOrEmpty(agateUrl);
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+  public boolean hasServiceName() {
+    return !Strings.isNullOrEmpty(serviceName);
+  }
+
+  public String getServiceKey() {
+    return serviceKey;
+  }
+
+  public void setServiceKey(String serviceKey) {
+    this.serviceKey = serviceKey;
+  }
+
+  public boolean hasServiceKey() {
+    return !Strings.isNullOrEmpty(serviceKey);
   }
 
   public String getPublicUrl() {
