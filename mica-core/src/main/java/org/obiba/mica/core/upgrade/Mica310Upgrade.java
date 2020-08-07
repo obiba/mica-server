@@ -170,7 +170,7 @@ public class Mica310Upgrade implements UpgradeStep {
   void removeTaxonomyTaxonomyFromMongo() {
     try {
       logger.info("Remove Taxonomy of Taxonomies from DB since it is no longer persisted.");
-      mongoTemplate.execute(db -> db.eval("db.taxonomyEntityWrapper.deleteOne({_id: 'taxonomy'});"));
+      // mongoTemplate.execute(db -> db.eval("db.taxonomyEntityWrapper.deleteOne({_id: 'taxonomy'});"));
     } catch (RuntimeException e) {
       logger.error("Error occurred when trying to removeTaxonomyTaxonomyFromMongo().", e);
     }
@@ -209,7 +209,7 @@ public class Mica310Upgrade implements UpgradeStep {
     try {
       JSONArray jsonArray = json.getJSONObject("methods").getJSONArray("recruitments");
       return jsonArray.length() > 0;
-    } catch (RuntimeException | JSONException ignore) {
+    } catch (RuntimeException ignore) {
       return false;
     }
   }

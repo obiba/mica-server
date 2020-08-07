@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -29,6 +29,7 @@ import org.obiba.mica.user.UserProfileService;
 import org.obiba.mica.web.model.Dtos;
 import org.obiba.mica.web.model.Mica;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -59,9 +60,9 @@ public class UsersProfileResource {
   }
 
   @POST
-  public Response userJoin(@Context HttpServletRequest request) {
-    final Map<String, String[]> params = request.getParameterMap();
+  public Response userJoin(@RequestParam Map<String, String[]> params) {
     try {
+
       userProfileService.createUser(params);
       return Response.ok().build();
     } catch (HttpStatusCodeException e) {

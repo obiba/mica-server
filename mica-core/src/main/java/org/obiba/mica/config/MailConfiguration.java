@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,26 +51,26 @@ public class MailConfiguration implements EnvironmentAware {
 
   private static final Logger log = LoggerFactory.getLogger(MailConfiguration.class);
 
-  private RelaxedPropertyResolver propertyResolver;
+  private Environment environment;
 
   public MailConfiguration() {
   }
 
   @Override
   public void setEnvironment(Environment environment) {
-    propertyResolver = new RelaxedPropertyResolver(environment, ENV_SPRING_MAIL);
+    this.environment = environment;
   }
 
   @Bean
   public JavaMailSenderImpl javaMailSender() {
     log.debug("Configuring mail server");
-    String host = propertyResolver.getProperty(PROP_HOST, DEFAULT_PROP_HOST);
-    int port = propertyResolver.getProperty(PROP_PORT, Integer.class, 0);
-    String user = propertyResolver.getProperty(PROP_USER);
-    String password = propertyResolver.getProperty(PROP_PASSWORD);
-    String protocol = propertyResolver.getProperty(PROP_PROTO);
-    Boolean tls = propertyResolver.getProperty(PROP_TLS, Boolean.class, false);
-    Boolean auth = propertyResolver.getProperty(PROP_AUTH, Boolean.class, false);
+    String host = environment.getProperty(ENV_SPRING_MAIL + PROP_HOST, DEFAULT_PROP_HOST);
+    int port = environment.getProperty(ENV_SPRING_MAIL + PROP_PORT, Integer.class, 0);
+    String user = environment.getProperty(ENV_SPRING_MAIL + PROP_USER);
+    String password = environment.getProperty(ENV_SPRING_MAIL + PROP_PASSWORD);
+    String protocol = environment.getProperty(ENV_SPRING_MAIL + PROP_PROTO);
+    Boolean tls = environment.getProperty(ENV_SPRING_MAIL + PROP_TLS, Boolean.class, false);
+    Boolean auth = environment.getProperty(ENV_SPRING_MAIL + PROP_AUTH, Boolean.class, false);
 
     JavaMailSenderImpl sender = new JavaMailSenderImpl();
     if(host != null && !host.isEmpty()) {

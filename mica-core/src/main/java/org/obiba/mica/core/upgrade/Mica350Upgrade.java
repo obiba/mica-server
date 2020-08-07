@@ -42,7 +42,7 @@ public class Mica350Upgrade implements UpgradeStep {
 
     try {
       logger.info("Removing old \"sets\" vocabulary in current Mica_variable taxonomy");
-      mongoTemplate.execute(db -> db.eval(removeSetsVocabulariesTerms()));
+      // mongoTemplate.execute(db -> db.eval(removeSetsVocabulariesTerms()));
     } catch (RuntimeException e) {
       logger.error("Error occurred when trying to execute removeSetsVocabulariesTerms.", e);
     }

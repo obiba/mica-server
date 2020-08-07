@@ -62,7 +62,7 @@ public class Mica372Upgrade implements UpgradeStep {
 
     try {
       logger.info("Checking presence of \"start-range\" vocabulary in current Study taxonomy");
-      mongoTemplate.execute(db -> db.eval(addStartRangeVocabularyToStudyTaxonomyIfMissing()));
+      // mongoTemplate.execute(db -> db.eval(addStartRangeVocabularyToStudyTaxonomyIfMissing()));
     } catch (RuntimeException e) {
       logger.error("Error occurred when trying to addStartRangeVocabularyToStudyTaxonomyIfMissing.", e);
     }
@@ -77,7 +77,7 @@ public class Mica372Upgrade implements UpgradeStep {
 
     try {
       logger.info("Updating studies and networks with their membership sort orders.");
-      mongoTemplate.execute(db -> db.eval(setMemberShipSortOrder()));
+      // mongoTemplate.execute(db -> db.eval(setMemberShipSortOrder()));
 
       studyService.findAllStates().stream().filter(state -> !state.hasRevisionsAhead() && state.isPublished()).forEach(state -> {
         studyService.save(studyService.findStudy(state.getId()), "Updating membership sort orders.");

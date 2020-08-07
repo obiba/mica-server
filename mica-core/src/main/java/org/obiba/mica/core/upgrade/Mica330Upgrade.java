@@ -48,7 +48,7 @@ public class Mica330Upgrade implements UpgradeStep {
 
     try {
       logger.info("Checking presence of \"sets\" vocabulary in current Mica_variable taxonomy");
-      mongoTemplate.execute(db -> db.eval(addSetsVocabularyToVariableTaxonomyIfMissing()));
+      // mongoTemplate.execute(db -> db.eval(addSetsVocabularyToVariableTaxonomyIfMissing()));
     } catch (RuntimeException e) {
       logger.error("Error occurred when trying to addSetsVocabularyToVariableTaxonomyIfMissing.", e);
     }

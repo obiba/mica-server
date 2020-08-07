@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -85,8 +84,7 @@ public class DraftHarmonizedDatasetsResource {
                                     @QueryParam("query") String query,
                                     @QueryParam("from") @DefaultValue("0") Integer from,
                                     @QueryParam("limit") Integer limit,
-                                    @QueryParam("filter") @DefaultValue("ALL") String filter,
-                                    @Context HttpServletResponse response) {
+                                    @QueryParam("filter") @DefaultValue("ALL") String filter) {
     Stream<Mica.DatasetDto> result;
     long totalCount;
 
@@ -106,8 +104,6 @@ public class DraftHarmonizedDatasetsResource {
     DocumentService.Documents<HarmonizationDataset> datasets = draftDatasetService.find(from, limit, null, null, studyId, query, null, null, accessibleIdFilter);
     totalCount = datasets.getTotal();
     result = datasetService.findAllDatasets(datasets.getList().stream().map(Dataset::getId).collect(toList())).stream().map(d -> dtos.asDto(d, true));
-
-    response.addHeader("X-Total-Count", Long.toString(totalCount));
 
     return result.collect(toList());
 

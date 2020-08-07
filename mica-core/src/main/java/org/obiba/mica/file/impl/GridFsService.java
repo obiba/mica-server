@@ -20,9 +20,8 @@ import org.obiba.mica.file.service.TempFileService;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.stereotype.Component;
-
-import com.mongodb.gridfs.GridFSDBFile;
 
 @Component
 public class GridFsService implements FileStoreService {
@@ -35,12 +34,13 @@ public class GridFsService implements FileStoreService {
 
   @Override
   public InputStream getFile(String id) throws FileRuntimeException {
-    GridFSDBFile f = gridFsOperations.findOne(new Query().addCriteria(Criteria.where("filename").is(id)));
+    GridFsResource f = gridFsOperations.getResource(id);
 
     if(f == null)
       throw new FileRuntimeException(id);
 
-    return f.getInputStream();
+
+    return f.getContent();
   }
 
   @Override

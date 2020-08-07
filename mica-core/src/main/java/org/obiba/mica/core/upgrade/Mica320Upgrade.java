@@ -50,7 +50,7 @@ public class Mica320Upgrade implements UpgradeStep {
 
     try {
       logger.info("Updating variable's variableType vocabulary terms.");
-      mongoTemplate.execute(db -> db.eval(variableTypeVocabularyTermsUpdate()));
+      // mongoTemplate.execute(db -> db.eval(variableTypeVocabularyTermsUpdate()));
     } catch(Exception e) {
       logger.error("Failed to update variable's variableType vocabulary terms", e);
     }

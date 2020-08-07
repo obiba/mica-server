@@ -252,9 +252,9 @@ public class Mica2Upgrade implements UpgradeStep {
 
   private void upgradeMembershipsOfStudiesAndNetworks() {
     logger.info("start upgrade memberships of studies and networks ");
-    mongoTemplate.execute(db -> db.eval(queryToUpgradeMembershipsOfStudies()));
-    mongoTemplate.execute(db -> db.eval(queryToUpgradeMembershipsOfNetworks()));
-    mongoTemplate.execute(db -> db.eval(queryToUpgradeRecruitmentDataSoureceAttributeName()));
+    // mongoTemplate.execute(db -> db.eval(queryToUpgradeMembershipsOfStudies()));
+    // mongoTemplate.execute(db -> db.eval(queryToUpgradeMembershipsOfNetworks()));
+    // mongoTemplate.execute(db -> db.eval(queryToUpgradeRecruitmentDataSoureceAttributeName()));
     logger.info("end upgrade memberships of studies and networks ");
   }
 

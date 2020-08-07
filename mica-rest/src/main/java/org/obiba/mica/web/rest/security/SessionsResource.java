@@ -10,11 +10,9 @@
 package org.obiba.mica.web.rest.security;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -58,7 +56,7 @@ public class SessionsResource {
 
   @POST
   @Path("/sessions")
-  public Response createSession(@SuppressWarnings("TypeMayBeWeakened") @Context HttpServletRequest servletRequest,
+  public Response createSession(
       @FormParam("username") String username, @FormParam("password") String password) {
     try {
       authenticationExecutor.login(new UsernamePasswordToken(username, password));
@@ -77,7 +75,7 @@ public class SessionsResource {
     } catch(UserBannedException e) {
       throw e;
     } catch(AuthenticationException e) {
-      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, servletRequest.getRemoteAddr(),
+      log.info("Authentication failure of user '{}' at ip: '{}': {}", username, "servletRequest.getRemoteAddr()",
           e.getMessage());
       // When a request contains credentials and they are invalid, the 403 (Forbidden) should be returned.
       return Response.status(Response.Status.FORBIDDEN).cookie().build();

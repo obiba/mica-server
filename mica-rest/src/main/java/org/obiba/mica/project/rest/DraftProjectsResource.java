@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -79,8 +78,7 @@ public class DraftProjectsResource {
   public Mica.ProjectsDto list(@QueryParam("query") String query,
                                @QueryParam("from") @DefaultValue("0") Integer from,
                                @QueryParam("limit") Integer limit,
-                               @QueryParam("filter") @DefaultValue("ALL") String filter,
-                               @Context HttpServletResponse response) {
+                               @QueryParam("filter") @DefaultValue("ALL") String filter) {
     Stream<Project> result;
     long totalCount;
 

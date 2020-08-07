@@ -41,11 +41,12 @@ import org.obiba.mica.web.filter.StaticResourcesProductionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.jetty.JettyEmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
+import org.springframework.boot.autoconfigure.websocket.servlet.JettyWebSocketServletWebServerCustomizer;
+import org.springframework.boot.web.embedded.jetty.ConfigurableJettyWebServerFactory;
+import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.web.embedded.jetty.JettyServletWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
@@ -103,21 +104,30 @@ public class WebConfiguration implements ServletContextInitializer, JettyServerC
   @Override
   public void setEnvironment(Environment environment) {
     this.environment = environment;
-    RelaxedPropertyResolver propertyResolver = new RelaxedPropertyResolver(environment, "https.");
-    httpsPort = propertyResolver.getProperty("port", Integer.class, DEFAULT_HTTPS_PORT);
+    httpsPort = environment.getProperty("https.port", Integer.class, DEFAULT_HTTPS_PORT);
     contextPath = environment.getProperty("server.context-path", "");
     if (Strings.isNullOrEmpty(contextPath))
       contextPath = environment.getProperty("server.servlet.context-path", "");
   }
 
   @Bean
-  public EmbeddedServletContainerCustomizer containerCustomizer() throws Exception {
-    return (ConfigurableEmbeddedServletContainer container) -> {
-      JettyEmbeddedServletContainerFactory jetty = (JettyEmbeddedServletContainerFactory) container;
-      jetty.setServerCustomizers(Collections.singleton(this));
-      if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/"))
-        container.setContextPath(contextPath);
-    };
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> containerCustomizer() throws Exception {
+    JettyServletWebServerFactory jetty = new JettyServletWebServerFactory();
+
+    jetty.addServerCustomizers(this);
+    if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/")) jetty.setContextPath(contextPath);
+
+    // return (ConfigurableJettyWebServerFactory container) -> {
+    //   JettyEmbeddedServletContainerFactory jetty = (JettyEmbeddedServletContainerFactory) container;
+    //   jetty.setServerCustomizers(Collections.singleton(this));
+    //   if (!Strings.isNullOrEmpty(contextPath) && contextPath.startsWith("/"))
+    //     container.setContextPath(contextPath);
+    // };
+
+    JettyWebSocketServletWebServerCustomizer container = new JettyWebSocketServletWebServerCustomizer();
+    container.customize(jetty);
+
+    return container;
   }
 
   @Override

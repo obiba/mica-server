@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -24,17 +23,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.obiba.mica.file.TempFile;
 import org.obiba.mica.file.service.TempFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.codahale.metrics.annotation.Timed;
 
@@ -53,10 +50,9 @@ public class TempFilesResource {
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)
   @Timed
-  public Response upload(@Context HttpServletRequest request, @Context UriInfo uriInfo)
+  public Response upload(@RequestParam("file") MultipartFile fileItem, @Context UriInfo uriInfo)
     throws IOException, FileUploadException {
 
-    FileItem fileItem = getUploadedFile(request);
     if (fileItem == null) throw new FileUploadException("Failed to extract file item from request");
     TempFile tempFile = tempFileService.addTempFile(fileItem.getName(), fileItem.getInputStream());
     URI location = uriInfo.getBaseUriBuilder().path(TempFilesResource.class).path(TempFilesResource.class, "file")
@@ -72,16 +68,16 @@ public class TempFilesResource {
     return tempFileResource;
   }
 
-  FileItem getUploadedFile(HttpServletRequest request) throws FileUploadException {
-    FileItemFactory factory = new DiskFileItemFactory();
-    ServletFileUpload upload = new ServletFileUpload(factory);
-    for(FileItem fileItem : upload.parseRequest(request)) {
-      if(!fileItem.isFormField()) {
-        return fileItem;
-      }
-    }
+  // FileItem getUploadedFile(HttpServletRequest request) throws FileUploadException {
+  //   FileItemFactory factory = new DiskFileItemFactory();
+  //   ServletFileUpload upload = new ServletFileUpload(factory);
+  //   for(FileItem fileItem : upload.parseRequest(request)) {
+  //     if(!fileItem.isFormField()) {
+  //       return fileItem;
+  //     }
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
 }

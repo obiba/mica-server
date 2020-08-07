@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.aop.interceptor.SimpleAsyncUncaughtExceptionHandler;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,11 +36,11 @@ public class AsyncConfiguration implements AsyncConfigurer, EnvironmentAware {
 
   private static final int DEFAULT_POOL_SIZE = 10;
 
-  private RelaxedPropertyResolver propertyResolver;
+  private Environment environment;
 
   @Override
   public void setEnvironment(Environment environment) {
-    propertyResolver = new RelaxedPropertyResolver(environment, "async.");
+    this.environment = environment;
   }
 
   @Override
@@ -53,12 +52,12 @@ public class AsyncConfiguration implements AsyncConfigurer, EnvironmentAware {
   @Bean
   public Executor getAsyncExecutor() {
 
-    Integer poolSize = propertyResolver.getProperty("poolSize", Integer.class, DEFAULT_POOL_SIZE);
+    Integer poolSize = environment.getProperty("async.poolSize", Integer.class, DEFAULT_POOL_SIZE);
 
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(poolSize);
     executor.setMaxPoolSize(poolSize);
-    executor.setQueueCapacity(propertyResolver.getProperty("queueCapacity", Integer.class, DEFAULT_QUEUE_CAPACITY));
+    executor.setQueueCapacity(environment.getProperty("async.queueCapacity", Integer.class, DEFAULT_QUEUE_CAPACITY));
     executor.setThreadNamePrefix("mica-executor-");
     return new MicaAsyncTaskExecutor(executor);
   }
@@ -67,12 +66,12 @@ public class AsyncConfiguration implements AsyncConfigurer, EnvironmentAware {
   public Executor getOpalAsyncExecutor() {
     log.debug("Creating Async Task Executor");
 
-    Integer poolSize = propertyResolver.getProperty("opal.poolSize", Integer.class, DEFAULT_POOL_SIZE);
+    Integer poolSize = environment.getProperty("async.opal.poolSize", Integer.class, DEFAULT_POOL_SIZE);
 
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
     executor.setCorePoolSize(poolSize);
     executor.setMaxPoolSize(poolSize);
-    executor.setQueueCapacity(propertyResolver.getProperty("opal.queueCapacity", Integer.class, DEFAULT_QUEUE_CAPACITY));
+    executor.setQueueCapacity(environment.getProperty("async.opal.queueCapacity", Integer.class, DEFAULT_QUEUE_CAPACITY));
     executor.setThreadNamePrefix("mica-opal-executor-");
     return new MicaAsyncTaskExecutor(executor);
   }

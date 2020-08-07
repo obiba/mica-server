@@ -107,7 +107,7 @@ public class Mica220Upgrade implements UpgradeStep {
   }
 
   private void removeUselessClassAttributeInModel() {
-    mongoTemplate.execute(db -> db.eval("db.study.updateMany({\"model.methods._class\":{$exists:true}}, {$unset:{\"model.methods._class\":\"\"}})"));
+    // mongoTemplate.execute(db -> db.eval("db.study.updateMany({\"model.methods._class\":{$exists:true}}, {$unset:{\"model.methods._class\":\"\"}})"));
   }
 
   private void updateTaxonomiesWithRangeCriteria() {
@@ -154,7 +154,7 @@ public class Mica220Upgrade implements UpgradeStep {
   }
 
   private void updateStudyTaxonomyMissingFields() {
-    mongoTemplate.execute(db -> db.eval(addMissingAttributesInStudyTaxonomy()));
+    // mongoTemplate.execute(db -> db.eval(addMissingAttributesInStudyTaxonomy()));
   }
 
   private void updateBioSamplesAttributes() throws IOException {
@@ -184,8 +184,8 @@ public class Mica220Upgrade implements UpgradeStep {
   }
 
   private void updateAttributeNameInStudies() {
-    mongoTemplate.execute(db -> db.eval(addBioSamplesAttributeIfNeededQuery()));
-    mongoTemplate.execute(db -> db.eval(removeOutdatedBioSamplesAttributeQuery()));
+    // mongoTemplate.execute(db -> db.eval(addBioSamplesAttributeIfNeededQuery()));
+    // mongoTemplate.execute(db -> db.eval(removeOutdatedBioSamplesAttributeQuery()));
   }
 
   private void replacePropertyInSchema(JsonNode schemaNode) {

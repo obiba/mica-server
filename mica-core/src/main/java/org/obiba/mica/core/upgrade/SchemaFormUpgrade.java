@@ -47,7 +47,7 @@ public class SchemaFormUpgrade implements UpgradeStep {
   @Override
   public void execute(Version currentVersion) {
     logger.info("migration to 2.1.0 : START");
-    mongoTemplate.execute(db -> db.eval(mongoQueryMoveSomePopulationCriterias()));
+    // mongoTemplate.execute(db -> db.eval(mongoQueryMoveSomePopulationCriterias()));
     logger.info("migration to 2.1.0 : END");
   }
 

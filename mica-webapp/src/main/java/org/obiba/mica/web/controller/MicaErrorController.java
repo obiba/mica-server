@@ -1,5 +1,6 @@
 package org.obiba.mica.web.controller;
 
+import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,11 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
-public class ErrorController implements org.springframework.boot.autoconfigure.web.ErrorController {
+public class MicaErrorController implements ErrorController {
 
   @GetMapping("/error")
   public ModelAndView error(@RequestParam(value = "error", required = false, defaultValue = "500") String status, @RequestParam(defaultValue = "") String message) {

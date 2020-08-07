@@ -31,7 +31,6 @@ import org.obiba.mica.web.model.Mica;
 import org.springframework.context.ApplicationContext;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -80,8 +79,7 @@ public class StudyStatesResource {
                                                               @QueryParam("limit") Integer limit,
                                                               @QueryParam("type") String type,
                                                               @QueryParam("exclude") List<String> excludes,
-                                                              @QueryParam("filter") @DefaultValue("ALL") String filter,
-                                                              @Context HttpServletResponse response) {
+                                                              @QueryParam("filter") @DefaultValue("ALL") String filter) {
     Stream<? extends EntityState> result;
     long totalCount;
 
@@ -115,8 +113,6 @@ public class StudyStatesResource {
       ? getStudyServiceByType(type).findAllStates(studyDocuments.getList().stream().map(Study::getId).collect(toList()))
       : studyService.findAllStates(studyDocuments.getList().stream().map(Study::getId).collect(toList())))
       .stream();
-
-    response.addHeader("X-Total-Count", Long.toString(totalCount));
 
     return result.map(dtos::asDto).collect(toList());
   }

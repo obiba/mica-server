@@ -1,8 +1,8 @@
 package org.obiba.mica.core.support;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
+
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This utility class replaces the deprecated eval() for executing aggregation using JS scripts.
+ * This utility class replaces the deprecated eval() for executing aggregation
+ * using JS scripts.
  */
 public class MongoAggregationExecutor {
 
@@ -31,20 +32,16 @@ public class MongoAggregationExecutor {
   /**
    * Executes the aggregation scripts on the input collection
    *
-   * @param scripts JS aggregation scripts
+   * @param scripts    JS aggregation scripts
    * @param collection Name of the collection the aggregation is executed on
    * @return DB results as a list of LinkedHashMap
    */
   public List<LinkedHashMap> execute(List<String> scripts, String collection) {
-    Aggregation aggregation = Aggregation.newAggregation(
-      scripts.stream().map(CustomAggregationOperation::new).collect(Collectors.toList())
-    );
+    Aggregation aggregation = Aggregation
+        .newAggregation(scripts.stream().map(CustomAggregationOperation::new).collect(Collectors.toList()));
 
     AggregationResults<BasicDBObject> results = mongoTemplate.aggregate(aggregation, collection, BasicDBObject.class);
-    return results.getMappedResults()
-      .stream()
-      .map(LinkedHashMap.class::cast)
-      .collect(Collectors.toList());
+    return results.getMappedResults().stream().map(LinkedHashMap.class::cast).collect(Collectors.toList());
   }
 
   /**
@@ -58,20 +55,21 @@ public class MongoAggregationExecutor {
       this.script = queryScript;
     }
 
-    private DBObject parseScript() {
-      // There are no parse() for SimpleDbList, use the same algorithm as the deprecated com.mongodb.util.JSON class
+    private Document parseScript() {
+      // There are no parse() for SimpleDbList, use the same algorithm as the
+      // deprecated com.mongodb.util.JSON class
       if (script.charAt(0) == '[') {
         String arrScript = String.format("{stages:%s}", script);
-        BasicDBObject parsed = BasicDBObject.parse(arrScript);
-        return (BasicDBList)parsed.get("stages");
+        Document parsed = Document.parse(arrScript);
+        return (Document) parsed.get("stages");
       }
 
-      return BasicDBObject.parse(script);
+      return Document.parse(script);
     }
 
     @Override
-    public DBObject toDBObject(AggregationOperationContext aggregationOperationContext) {
-      return aggregationOperationContext.getMappedObject(parseScript());
+    public Document toDocument(AggregationOperationContext context) {
+      return context.getMappedObject(parseScript());
     }
   }
 }

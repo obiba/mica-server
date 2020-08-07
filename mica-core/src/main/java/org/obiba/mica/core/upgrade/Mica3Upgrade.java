@@ -172,7 +172,7 @@ public class Mica3Upgrade implements UpgradeStep {
 
   private void executeMongoScript(String script, String infoLog) {
     logger.info(infoLog);
-    mongoTemplate.execute(db -> db.eval(script));
+    // mongoTemplate.execute(db -> db.eval(script));
   }
 
   private String renameDocuments() {

@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -85,8 +84,9 @@ public class DraftNetworksResource {
                                            @QueryParam("from") @DefaultValue("0") Integer from,
                                            @QueryParam("limit") Integer limit,
                                            @QueryParam("exclude") List<String> excludes,
-                                           @QueryParam("filter") @DefaultValue("ALL") String filter,
-                                           @Context HttpServletResponse response) { Stream<Network> result;
+                                           @QueryParam("filter") @DefaultValue("ALL") String filter) {
+
+    Stream<Network> result;
     long totalCount;
 
     EntityStateFilter entityStateFilter = EntityStateFilter.valueOf(filter);
@@ -111,9 +111,8 @@ public class DraftNetworksResource {
 
     DocumentService.Documents<Network> networkDocuments = draftNetworkService.find(from, limit, null, null, studyId, query, null, null, accessibleIdFilter);
     totalCount = networkDocuments.getTotal();
-    result = networkService.findAllNetworks(networkDocuments.getList().stream().map(AbstractGitPersistable::getId).collect(toList())).stream();
-
-    response.addHeader("X-Total-Count", Long.toString(totalCount));
+    List<Network> networks = networkService.findAllNetworks(networkDocuments.getList().stream().map(AbstractGitPersistable::getId).collect(toList()));
+    result = networks.stream();
 
     return result.map(n -> dtos.asSummaryDto(n, true)).collect(toList());
   }
