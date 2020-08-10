@@ -1,4 +1,4 @@
-skipTests = true
+skipTests = false
 version=3.1-SNAPSHOT
 mvn_exec = mvn -Dmaven.test.skip=${skipTests}
 current_dir = $(shell pwd)
