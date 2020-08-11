@@ -222,7 +222,7 @@
         <artifactId>geronimo-javamail_1.4_mail</artifactId>
         <version>${geronimo-javamail_1.4_mail.version}</version>
       </dependency>
-      <dependency>
+      <!-- <dependency>
         <groupId>org.springframework.data</groupId>
         <artifactId>spring-data-commons</artifactId>
         <version>${spring-data-commons.version}</version>
@@ -231,7 +231,7 @@
         <groupId>org.mongodb</groupId>
         <artifactId>mongodb-driver</artifactId>
         <version>${mongodb-driver.version}</version>
-      </dependency>
+      </dependency> -->
 
       <dependency>
         <groupId>io.github.jhipster.loaded</groupId>

@@ -62,17 +62,14 @@ public abstract class AbstractAuditableDocument implements Auditable<String, Str
   }
 
   @JsonIgnore
-  @Override
   public boolean isNew() {
     return Strings.isNullOrEmpty(id);
   }
 
-  @Override
   public String getCreatedBy() {
     return createdBy;
   }
 
-  @Override
   public void setCreatedBy(String createdBy) {
     this.createdBy = createdBy;
   }
@@ -91,12 +88,10 @@ public abstract class AbstractAuditableDocument implements Auditable<String, Str
     return !Strings.isNullOrEmpty(lastModifiedBy);
   }
 
-  @Override
   public String getLastModifiedBy() {
     return lastModifiedBy;
   }
 
-  @Override
   public void setLastModifiedBy(String lastModifiedBy) {
     this.lastModifiedBy = lastModifiedBy;
   }

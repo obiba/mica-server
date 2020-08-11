@@ -34,8 +34,6 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
-import sun.util.locale.LanguageTag;
-
 import static java.util.stream.Collectors.toMap;
 
 @Component
@@ -43,6 +41,8 @@ import static java.util.stream.Collectors.toMap;
 @Path("/config/data-access")
 @RequiresAuthentication
 public class DataAccessResource {
+
+  public static final String LANGUAGE_TAG_UNDETERMINED = "und";
 
   @Inject
   DataAccessFormService dataAccessFormService;
@@ -65,7 +65,7 @@ public class DataAccessResource {
     Mica.DataAccessFormDto.Builder builder = Mica.DataAccessFormDto.newBuilder(dtos.asDto(dataAccessForm))
       .clearProperties().clearPdfTemplates();
 
-    String langTag = !Strings.isNullOrEmpty(lang) ? Locale.forLanguageTag(lang).toLanguageTag() : LanguageTag.UNDETERMINED;
+    String langTag = !Strings.isNullOrEmpty(lang) ? Locale.forLanguageTag(lang).toLanguageTag() : LANGUAGE_TAG_UNDETERMINED;
 
     Map<String, LocalizedString> properties = dataAccessForm.getProperties().entrySet().stream()
       .map(e -> Maps.immutableEntry(e.getKey(), new LocalizedString().forLanguageTag(langTag, e.getValue().get(langTag))))
@@ -84,7 +84,7 @@ public class DataAccessResource {
     if(!d.isPresent()) throw NoSuchDataAccessFormException.withDefaultMessage();
 
     DataAccessForm dataAccessForm = d.get();
-    Locale locale = Locale.forLanguageTag(!Strings.isNullOrEmpty(lang) ? Locale.forLanguageTag(lang).toLanguageTag() : LanguageTag.UNDETERMINED);
+    Locale locale = Locale.forLanguageTag(!Strings.isNullOrEmpty(lang) ? Locale.forLanguageTag(lang).toLanguageTag() : LANGUAGE_TAG_UNDETERMINED);
 
     if (!dataAccessForm.getPdfTemplates().containsKey(locale)) throw NoSuchDataAccessFormException.withDefaultMessage();
 

@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -43,7 +42,12 @@ public class Mica220UpgradeTest {
   public void testUpdateRangeTaxonomies() throws IOException {
     when(taxonomyConfigRepository.findOne("study")).thenReturn(getWrapper("study"));
     mica220Upgrade.updateTaxonomyWithRangeCriteria("study");
-    verify(taxonomyConfigRepository).save((TaxonomyEntityWrapper)argThat(new TaxonomyArgumentMatcher()));
+    verify(taxonomyConfigRepository).save((TaxonomyEntityWrapper)argThat(object -> {
+      TaxonomyEntityWrapper wrapper = (TaxonomyEntityWrapper)object;
+      Vocabulary vocabulary = wrapper.getTaxonomy().getVocabulary("numberOfParticipants-participant-range");
+      return vocabulary.getAttributeValue("alias").endsWith("-range") &&
+          vocabulary.getAttributeValue("range").equals("true");
+    }));
   }
 
   private TaxonomyEntityWrapper getWrapper(String name) throws IOException {
@@ -53,16 +57,5 @@ public class Mica220UpgradeTest {
     wrapper.setTarget(name);
     wrapper.setTaxonomy(taxonomy);
     return wrapper;
-  }
-
-  class TaxonomyArgumentMatcher extends ArgumentMatcher {
-
-    @Override
-    public boolean matches(Object object) {
-      TaxonomyEntityWrapper wrapper = (TaxonomyEntityWrapper)object;
-      Vocabulary vocabulary = wrapper.getTaxonomy().getVocabulary("numberOfParticipants-participant-range");
-      return vocabulary.getAttributeValue("alias").endsWith("-range") &&
-          vocabulary.getAttributeValue("range").equals("true");
-    }
   }
 }

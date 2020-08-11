@@ -27,7 +27,6 @@ import org.obiba.mica.web.model.Mica;
 import com.google.common.collect.Lists;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import sun.util.locale.LanguageTag;
 
 import static org.obiba.mica.web.model.Mica.DatasetVariablesHarmonizationsDto;
 
@@ -36,6 +35,7 @@ public class CsvHarmonizationVariablesWriter {
   private final List<String> namespaces;
 
   private static final String EMPTY_STATUS = "";
+  public static final String LANGUAGE_TAG_UNDETERMINED = "und";
 
   public CsvHarmonizationVariablesWriter(List<String> namespaces) {
     this.namespaces = namespaces;
@@ -112,7 +112,7 @@ public class CsvHarmonizationVariablesWriter {
         .filter(attribute -> namespaces.contains(attribute.getNamespace()) && attribute.getName().equals("status"))
         .map(Mica.AttributeDto::getValuesList).flatMap(Collection::stream).filter(value -> {
           String lang = value.getLang();
-          return locale.equals(lang) || LanguageTag.UNDETERMINED.equals(lang);
+          return locale.equals(lang) || LANGUAGE_TAG_UNDETERMINED.equals(lang);
         }).findFirst();
 
 

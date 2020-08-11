@@ -54,6 +54,10 @@ public class Application {
    */
   public static void main(String... args) {
 
+    log.info("############### {}", System.getProperties().keySet());
+    log.info("$$$$$$$$$$$$$$$$$$$$$$$$$ {}", (Object[]) args);
+
+    System.setProperty("MICA_HOME", "/home/user/projects/obiba/mica2/mica-webapp/target/mica_home");
     checkSystemProperty("MICA_HOME");
 
     SpringApplicationBuilder app = new SpringApplicationBuilder(Application.class)
@@ -71,7 +75,7 @@ public class Application {
   private static void checkSystemProperty(@NotNull String... properties) {
     for(String property : properties) {
       if(System.getProperty(property) == null) {
-        throw new IllegalStateException("System property \"" + property + "\" must be defined.");
+        throw new IllegalStateException("System property \"" + System.getProperties().keySet() + "\" must be defined.");
       }
     }
   }

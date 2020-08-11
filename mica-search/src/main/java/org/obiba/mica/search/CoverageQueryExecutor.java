@@ -24,7 +24,6 @@ import org.obiba.opal.core.domain.taxonomy.Term;
 import org.obiba.opal.core.domain.taxonomy.Vocabulary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import sun.util.locale.LanguageTag;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -39,6 +38,8 @@ import java.util.stream.Collectors;
 @Component
 @Scope("request")
 public class CoverageQueryExecutor {
+
+  public static final String LANGUAGE_TAG_UNDETERMINED = "und";
 
   @Inject
   private OpalService opalService;
@@ -69,7 +70,7 @@ public class CoverageQueryExecutor {
         restrictedTermsMap.forEach((taxo, vocMap) -> vocMap.keySet().forEach(
             voc -> joinQuery.getVariableQuery().getAggregations()
                 .add("attributes." + AttributeKey.getMapKey(voc, taxo) + "." +
-                    LanguageTag.UNDETERMINED)));
+                    LANGUAGE_TAG_UNDETERMINED)));
       }
     }
 
